@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-adsense-account" content="ca-pub-3659884670016121">
+    <title>Ma Page avec Pub</title>
+    
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3659884670016121"
+         crossorigin="anonymous"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .ad-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        /* Popup AdBlock */
+        .adblock-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .adblock-popup.show {
+            display: flex;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .popup-content h2 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .popup-content p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .popup-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Détecteur d'AdBlock */
+        .adblock-detector {
+            height: 1px;
+            width: 1px;
+            position: absolute;
+            left: -9999px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Détecteur AdBlock invisible -->
+    <div class="adblock-detector" id="adDetector"></div>
+    
+    <!-- Popup AdBlock -->
+    <div class="adblock-popup" id="adblockPopup">
+        <div class="popup-content">
+            <div class="popup-icon">🚫</div>
+            <h2>AdBlock Détecté !</h2>
+            <p>Il semblerait que vous utilisez un bloqueur de publicités.</p>
+            <p>Merci de le désactiver pour soutenir notre site et accéder au contenu.</p>
+            <p><strong>Les publicités nous permettent de rester gratuits ! 🙏</strong></p>
+            <button class="close-btn" onclick="closePopup()">J'ai compris</button>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="container">
+        <div class="ad-container">
+            <h1>📢 Publicité</h1>
+            
+            <!-- Annonce Google AdSense -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-3659884670016121"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+
+    <script>
+        // Détection d'AdBlock
+        function detectAdBlock() {
+            const adDetector = document.getElementById('adDetector');
+            const popup = document.getElementById('adblockPopup');
+            
+            // Méthode 1 : Vérifier si Google AdSense est chargé
+            setTimeout(() => {
+                if (typeof adsbygoogle === 'undefined' || adsbygoogle.length === 0) {
+                    popup.classList.add('show');
+                }
+            }, 2000);
+
+            // Méthode 2 : Vérifier avec un élément test
+            const testAd = document.createElement('div');
+            testAd.innerHTML = '&nbsp;';
+            testAd.className = 'adsbox';
+            testAd.style.position = 'absolute';
+            testAd.style.left = '-9999px';
+            document.body.appendChild(testAd);
+
+            setTimeout(() => {
+                if (testAd.offsetHeight === 0) {
+                    popup.classList.add('show');
+                }
+                testAd.remove();
+            }, 1000);
+
+            // Méthode 3 : Vérifier les annonces AdSense
+            setTimeout(() => {
+                const ads = document.querySelectorAll('.adsbygoogle');
+                let adBlockDetected = false;
+                
+                ads.forEach(ad => {
+                    if (ad.innerHTML.length === 0 || ad.offsetHeight === 0) {
+                        adBlockDetected = true;
+                    }
+                });
+
+                if (adBlockDetected) {
+                    popup.classList.add('show');
+                }
+            }, 3000);
+        }
+
+        // Fermer la popup
+        function closePopup() {
+            document.getElementById('adblockPopup').classList.remove('show');
+        }
+
+        // Lancer la détection au chargement de la page
+        window.addEventListener('load', detectAdBlock);
+    </script>
+</body>
+</html>
